@@ -12,9 +12,9 @@ char hexaKeys[ROWS][COLS] = {
 };
 long currentMillis;
 long endMillis;
-int oreTimer = 1;
-int minuteTimer = 1;
-int secundeTimer = 1;
+int oreTimer = 0;
+int minuteTimer = 0;
+int secundeTimer = 0;
 int oreStopwatch = 0;
 int minuteStopwatch = 0;
 int secundeStopwatch = 0;
@@ -81,19 +81,33 @@ void loop() {
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   /*TIMER*/
   if (customKey == '4') {
+      oreTimer = 0;
+      minuteTimer = 0;
+      secundeTimer = 0;
       lcd.begin();
       lcd.setCursor(2,0);
       lcd.print("Timer mode");
+      timerString2(oreTimer,minuteTimer,secundeTimer);
     stopwatch = false;
   }
   if (customKey == 'B') {
     timer = true;
+    if (secundeTimer == 0 && minuteTimer == 0 && oreTimer == 0) {
+      timerString(oreTimer,minuteTimer,secundeTimer);
+        lcd.begin();
+        lcd.print("Timpul a");
+        lcd.setCursor(6,1);
+        lcd.print("expirat!");
+        timer = false;
+    }
+    
   }
   if (timer) {
+    
     currentMillis = millis();
     if (currentMillis - endMillis > 1000) {
       timerString(oreTimer,minuteTimer,secundeTimer);
-      if (secundeTimer == 0) {
+      if (secundeTimer == 0 && minuteTimer !=0) {
         minuteTimer--;
         secundeTimer = 59;
       } else {
@@ -106,6 +120,7 @@ void loop() {
           secundeTimer = 59;  
       }
       if (secundeTimer == 0 && minuteTimer == 0 && oreTimer == 0) {
+        timerString(oreTimer,minuteTimer,secundeTimer);
           lcd.begin();
           lcd.print("Timpul a");
           lcd.setCursor(6,1);
@@ -172,6 +187,26 @@ void timerString(int oref,int minutef,int secundef){
   lcd.begin();
   lcd.setCursor(0,0);
   lcd.print("Time: hh/mm/ss");
+  lcd.setCursor(6,1);
+  lcd.print(temp);
+}
+void timerString2(int oref,int minutef,int secundef){
+       String temp="";
+  if(oref<10){
+     temp += "0"+String(oref)+":";
+  }else{
+     temp += String(oref)+":"; 
+  }
+  if(minutef<10){
+     temp += "0"+String(minutef)+":";
+  }else{
+     temp += String(minutef)+":"; 
+  }
+  if(secundef<10){
+     temp += "0"+String(secundef);
+  }else{
+     temp += String(secundef); 
+  }
   lcd.setCursor(6,1);
   lcd.print(temp);
 }
